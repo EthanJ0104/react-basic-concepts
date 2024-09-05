@@ -50,6 +50,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import Country from './components/country';
+import NewCountry from './components/NewCountry';
 
 class App extends Component {
   state = {
@@ -59,6 +60,32 @@ class App extends Component {
       { id: 3, country: 'Russia', medals: { gold: 2, silver: 2, bronze: 5 } },
     ]
   };
+
+  handleDelete = (countryId) => {
+    this.setState(prevState => ({
+      countries: prevState.countries.filter(country => country.id !== countryId)
+    }));
+  };
+
+  // handleAdd = (country, gold, silver, bronze) => {
+  //   const { countries } = this.state;
+  //   const id = countries.length === 0 ? 1 : Math.max(...countries.map(country => country.id)) + 1;
+  //   const mutableWords = countries.concat({ id: id, country: country, gold: gold, silver: silver, bronze: bronze });
+  //   this.setState({ countries:mutableWords });
+  // }
+
+  handleAdd = (country, gold, silver, bronze) => {
+    const { countries } = this.state;
+    const id = countries.length === 0 ? 1 : Math.max(...countries.map(country => country.id)) + 1;
+    const newCountry = { 
+      id: id, 
+      country: country, 
+      medals: { gold: gold, silver: silver, bronze: bronze }  // Nest the medals here
+    };
+    const updatedCountries = countries.concat(newCountry);
+    this.setState({ countries: updatedCountries });
+  }
+  
 
   handleIncrement = (countryId, type) => {
     this.setState(prevState => ({
@@ -101,9 +128,11 @@ class App extends Component {
             medals={country.medals}
             onIncrement={(type) => this.handleIncrement(country.id, type)}
             onDecrement={(type) => this.handleDecrement(country.id, type)}
+            onDelete={() => this.handleDelete(country.id)}
           />
         )}
         <h2>Grand Total Medals: {grandTotalMedals}</h2>
+        <NewCountry onAdd={ this.handleAdd } />
       </div>
     );
   }

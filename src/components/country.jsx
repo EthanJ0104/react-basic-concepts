@@ -21,7 +21,7 @@ import Medal from './medal';
 
 class Country extends Component {
   render() {
-    const { country, medals, onIncrement, onDecrement } = this.props;
+    const { country, medals, onIncrement, onDecrement, onDelete } = this.props;
     const totalMedals = medals.gold + medals.silver + medals.bronze;
 
     return (
@@ -46,6 +46,7 @@ class Country extends Component {
           onDecrement={() => onDecrement('bronze')}
         />
         <h2>Total Medals: {totalMedals}</h2>
+        <button onClick={onDelete} style={{ backgroundColor: 'red', color: 'white' }}>Delete Country</button>
         <hr />
       </div>
     );
