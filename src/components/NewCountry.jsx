@@ -6,7 +6,7 @@ class NewCountry extends Component {
     gold: 0,
     silver: 0,
     bronze: 0,
-    errors: '' // State to track validation errors
+    showErrorToast: false // State to control showing/hiding the toast
   };
 
   handleChange = (e) => {
@@ -15,61 +15,85 @@ class NewCountry extends Component {
 
   handleSubmit = (e) => {
     e.preventDefault();
-    
+
     // Validate the country field
     if (this.state.country.trim() === '') {
-      this.setState({ errors: 'Country name is required.' });
+      // Show the error toast when validation fails
+      this.setState({ showErrorToast: true });
       return; // Stop form submission if validation fails
     }
 
-    // If validation passes, clear errors and proceed
-    this.setState({ errors: '' });
-    
+    // If validation passes, proceed with the add country logic
     const { country, gold, silver, bronze } = this.state;
     this.props.onAdd(country, Number(gold), Number(silver), Number(bronze));
 
-    // Clear form after submission
-    this.setState({ country: '', gold: 0, silver: 0, bronze: 0 });
+    // Clear form and hide toast after successful submission
+    this.setState({ country: '', gold: 0, silver: 0, bronze: 0, showErrorToast: false });
+  };
+
+  handleToastClose = () => {
+    this.setState({ showErrorToast: false });
   };
 
   render() {
     return (
-      <form onSubmit={this.handleSubmit}>
-        <div>
-          <input
-            type="text"
-            name="country"
-            placeholder="Country Name"
-            value={this.state.country}
-            onChange={this.handleChange}
-          />
-          {/* Display error message if validation fails */}
-          {this.state.errors && <p style={{ color: 'red' }}>{this.state.errors}</p>}
-        </div>
+      <div>
+        <form onSubmit={this.handleSubmit}>
+          <div>
+            <input
+              type="text"
+              name="country"
+              placeholder="Country Name"
+              value={this.state.country}
+              onChange={this.handleChange}
+              className="form-control"
+            />
+          </div>
 
-        <input
-          type="number"
-          name="gold"
-          placeholder="Gold Medals"
-          value={this.state.gold}
-          onChange={this.handleChange}
-        />
-        <input
-          type="number"
-          name="silver"
-          placeholder="Silver Medals"
-          value={this.state.silver}
-          onChange={this.handleChange}
-        />
-        <input
-          type="number"
-          name="bronze"
-          placeholder="Bronze Medals"
-          value={this.state.bronze}
-          onChange={this.handleChange}
-        />
-        <button type="submit">Add Country</button>
-      </form>
+          <input
+            type="number"
+            name="gold"
+            placeholder="Gold Medals"
+            value={this.state.gold}
+            onChange={this.handleChange}
+            className="form-control"
+          />
+          <input
+            type="number"
+            name="silver"
+            placeholder="Silver Medals"
+            value={this.state.silver}
+            onChange={this.handleChange}
+            className="form-control"
+          />
+          <input
+            type="number"
+            name="bronze"
+            placeholder="Bronze Medals"
+            value={this.state.bronze}
+            onChange={this.handleChange}
+            className="form-control"
+          />
+          <button type="submit" className="btn btn-primary mt-3">Add Country</button>
+        </form>
+
+        {/* Bootstrap Toast */}
+        <div
+          className={`toast position-fixed bottom-0 end-0 p-3 ${this.state.showErrorToast ? 'show' : 'hide'}`}
+          role="alert"
+          aria-live="assertive"
+          aria-atomic="true"
+          style={{ zIndex: 1 }}
+        >
+          <div className="toast-header">
+            <strong className="me-auto">Error</strong>
+            <button type="button" className="btn-close" onClick={this.handleToastClose}></button>
+          </div>
+          <div className="toast-body">
+            Country name is required.
+          </div>
+        </div>
+      </div>
     );
   }
 }
